@@ -1,6 +1,5 @@
 {
   "source": {
-    "include": "./src",
     "includePattern": ".+\\.ts(doc|x)?$",
     "excludePattern": ".+\\.(test|spec).ts"
   },

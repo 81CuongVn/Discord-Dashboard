@@ -1,12 +1,11 @@
 /**
  * @file Discord-Dashboard Source
  * @author Assistants Center
- * @license MIT
+ * @license CC BY-NC-SA 4.0
  * @version 3.0.0
  */
-import {Client, ProjectInfo, SessionSettings, SSLOptions, UserStatic} from "./types/types"
 
-import TextInput from "./formtypes/TextInput"
+import {Client, ProjectInfo, SessionSettings, SSLOptions, UserStatic} from "./types/types"
 
 import {fastify as fastifyModule} from 'fastify'
 
@@ -395,29 +394,8 @@ export class Dashboard {
  * @namespace Option Structure
  */
 
-/**
- * Form Types of Discord Dashboard module.
- * @example
- * const DBD = require('discord-dashboard')
- * const FormTypes = DBD.FormTypes
- * @namespace FormTypes
- */
+import { TextInput } from './formtypes/TextInput'
 
 export const FormTypes = {
-    /**
-     * Text input form type.
-     * @memberof FormTypes
-     * @method TextInput
-     * @param {string} name - The name of the input.
-     * @example
-     * module.exports = {
-     *      id: 'lang',
-     *      name: 'Language',
-     *      description: 'The language of the bot.',
-     *      type: DBD.FormTypes.TextInput('a'),
-     *      set: ()=>{},
-     *      get: ()=>{}
-     * }
-     */
     TextInput,
 }
