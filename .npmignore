@@ -1,0 +1,10 @@
+node_modules
+.idea
+src
+test
+tsconfig.json
+test/.env
+sessions
+test.md
+jsdoc.json
+docs
