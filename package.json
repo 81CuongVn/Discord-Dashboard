@@ -13,9 +13,9 @@
   "name": "discord-dashboard",
   "version": "beta-3.0.0",
   "main": "dist/index.d.ts",
-  "license": "MIT",
+  "license": "CC BY-NC-SA 4.0",
   "scripts": {
-    "docs": "jsdoc -c jsdoc.json -u ./docs/Tutorials"
+    "docs": "jsdoc -c jsdoc.json -u ./Tutorials"
   },
   "dependencies": {
     "@fastify/cookie": "6.0.0",
