@@ -53,11 +53,11 @@ new Dashboard()
     ])
     .start()
     .then((instance) => {
-        console.log(
+        /*console.log(
             `Dashboard started on ${instance.port} port with ${instance.theme.name} ` +
             `(codename: ${instance.theme.codename}) theme in ${instance.dev ? 'development' : 'production'} mode.`
         )
-        console.log(instance.categories)
+        console.log(JSON.stringify(instance.categories, null, 2))*/
     })
     .catch((err) => {
         console.error(err)

@@ -1,5 +1,6 @@
 /**
- * @file Discord-Dashboard Source
+ * @file index.ts
+ * @title Discord-Dashboard Source Code
  * @author Assistants Center
  * @license CC BY-NC-SA 4.0
  * @version 3.0.0
@@ -17,6 +18,8 @@ import * as ApiRouter from './api/router'
 
 import path from 'path'
 import fs from 'fs'
+
+import {ErrorThrower} from "./utils/ErrorThrower"
 
 /**
  * Discord-Dashboard Class
@@ -190,6 +193,7 @@ export class Dashboard {
                 options: categoryOptions
             })
         }
+        this.verifyOptions()
         return this
     }
 
@@ -220,7 +224,7 @@ export class Dashboard {
             console.log('Dashboard is in development mode. Please note that the dashboard will not send statistics to Assistants Services.')
             console.log('Also, each change in the theme pages source code will not be reflected in the dashboard after turning off development mode. You\'ll have to run the build command inside theme folder to build the changes into production environment.')
         }
-        this.fastify = fastifyModule({ logger: this.dev })
+        this.fastify = fastifyModule({ logger: false })
         const nextPrepared = await this.prepareNext()
         this.registerFastifyNext()
         this.registerFastifySession(this.fastify)
@@ -246,9 +250,44 @@ export class Dashboard {
         const options = []
         for(const Option of files) {
             const option = require(path.join(optionsPath, `./${Option}`))
+            option.type = option.type.settings
+            let optionId = option.name
+            while(optionId.includes(' '))
+                optionId = optionId.replace(' ', '_')
+            optionId = optionId.toLowerCase()
+            option.id = optionId
             options.push(option)
         }
         return options
+    }
+
+    /**
+     * Verify options list is unique and valid.
+     */
+    private verifyOptions () {
+        const categories = this.categories
+        let categoriesIds: string[] = []
+        for(const category of categories) {
+            if(categoriesIds.includes(category.id))
+                ErrorThrower(`Category id ${category.id} is not unique.`)
+            categoriesIds.push(category.id)
+            const optionsIds: string[] = []
+            for(const option of category.options) {
+                if(!option.type)
+                    ErrorThrower(`Option ${option.name} has no type.`)
+                if(!option.name)
+                    ErrorThrower(`An option in ${category.name} category with ${option.type.name} type has no name.`)
+                if(!option.id)
+                    ErrorThrower(`Option ${option.name} has no id.`)
+                if(optionsIds.includes(option.id))
+                    ErrorThrower(`Option id ${option.id} of ${option.name} option is not unique.`)
+                if(!option.get || typeof option.get !== 'function')
+                    ErrorThrower(`Option ${option.name} in ${category.name} category has no get function or it's type isn't function.`)
+                if(!option.set || typeof option.set !== 'function')
+                    ErrorThrower(`Option ${option.name} in ${category.name} category has no set function or it's type isn't function.`)
+                optionsIds.push(option.id)
+            }
+        }
     }
 
     /**
@@ -335,7 +374,7 @@ export class Dashboard {
      * Init Discord Dashboard API.
      */
     private initFastifyApi () {
-        ApiRouter.router({ fastify: this.fastify, client: this.discordClient });
+        ApiRouter.router({ fastify: this.fastify, discordClient: this.discordClient, categories: this.categories })
     }
 
     /**
@@ -343,7 +382,7 @@ export class Dashboard {
      * @returns {Promise<void>}
      */
     private initFastifyThemePages = async () => {
-        const ThemePages = await this.theme.getPages({ fastify: this.fastify, client: this.discordClient })
+        const ThemePages = await this.theme.getPages({ ...this })
         for (const page of ThemePages) {
             this.fastify.route({
                 method: page.method.toUpperCase(),
@@ -372,25 +411,56 @@ export class Dashboard {
 }
 
 /**
+ * @typedef OptionGetterOptions
+ * @property {object} guild - The guild object.
+ * @property {object} user - The user object.
+ */
+
+/**
+ * @typedef OptionSetterOptions
+ * @property {object} guild - The guild object.
+ * @property {object} user - The user object.
+ * @property newData - The new data to save.
+ */
+
+/**
+ * Set the options for an option on a guild.
+ *
+ * @callback OptionSetter
+ * @param {OptionSetterOptions} options - The options.
+ */
+
+/**
+ * Get the options for an option on a guild.
+ *
+ * @callback OptionGetter
+ * @param {OptionGetterOptions} - The options.
+ */
+
+/**
  * Discord-Dashboard option file structure.
  *
  * @example
- * const DBD = require('discord-dashboard')
+ * const {TextInput} = require('discord-dashboard').FormTypes
+ * const {TextInputOptions} = require('theme-module').ThemeOptions
+ *
  * module.exports = {
- *     id: 'prefix',
- *     name: 'Prefix',
- *     description: 'Change bot prefix easily',
- *     type: DBD.FormTypes.TextInput('a'),
+ *      name: 'Language',
+ *      description: 'The language of the bot.',
+ *      type: new TextInput()
+ *                  .setDefaultValue('!'),
+ *      themeOptions: new TextInputOptions()
+ *                          .setColor('#ff0000')
+ *                          .setBackgroundColor('#ff0000'),
+ *      set: async ()=>{},
+ *      get: async ()=>{}
  * }
  *
- * @property {string} id - The id of the option.
  * @property {string} name - The name of the option.
  * @property {string} description - The description of the option.
  * @property {any} type - The type of the option.
- * @property {any} default - The default value of the option.
- * @property {boolean} [disabled=false] - Whether the option is disabled.
- * @property {function} set - The function to set the option value.
- * @property {function} get - The function to get the option value.
+ * @property {OptionSetter} set - The function to set the option value.
+ * @property {OptionGetter} get - The function to get the option value.
  * @namespace Option Structure
  */
 
