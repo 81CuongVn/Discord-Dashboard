@@ -8,7 +8,12 @@
     "clean-jsdoc-theme": "^4.1.6",
     "discord.js-docgen": "github:discordjs/docgen#ts-patch",
     "eslint": "^7.32.0",
-    "jsdoc": "^3.6.11"
+    "jsdoc": "^3.6.11",
+    "@types/node": "^18.0.6",
+    "jsdoc-babel": "^0.5.0",
+    "session-file-store": "^1.5.0",
+    "dotenv": "^16.0.1",
+    "discord.js": "13"
   },
   "name": "discord-dashboard",
   "version": "beta-3.0.0",
@@ -18,19 +23,13 @@
     "docs": "jsdoc src/index.ts src/formtypes/TextInput.ts -c jsdoc.json -u ./Tutorials"
   },
   "dependencies": {
+    "fastify": "3.*",
     "@fastify/cookie": "6.*",
     "@fastify/helmet": "^8.*",
     "@fastify/oauth2": "5.*",
     "@fastify/session": "8.*",
     "@fastify/static": "5.*",
-    "@types/node": "^18.0.6",
-    "colors": "^1.4.0",
     "discord-oauth2": "^2.10.0",
-    "discord.js": "13",
-    "dotenv": "^16.0.1",
-    "fastify": "3.*",
-    "jsdoc-babel": "^0.5.0",
-    "jsdoc-template": "^1.2.0",
-    "session-file-store": "^1.5.0"
+    "colors": "^1.4.0"
   }
 }

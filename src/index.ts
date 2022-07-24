@@ -124,7 +124,7 @@ export class Dashboard {
     public setSession( sessionSettings: SessionSettings ) {
         sessionSettings = Object.assign({
             store: (fastifySession: any)=>fastifySession.memory,
-            secret: '',
+            secret: 'ggt9j5093g5g595t65h0gi6gih5gih956054544gtg4t4gtrgt4gt6g',
             expires: 3600,
             saveUninitialized: true,
         }, sessionSettings)
