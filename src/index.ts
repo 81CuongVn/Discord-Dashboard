@@ -61,11 +61,14 @@ export class Dashboard {
     private saveUninitialized: boolean | undefined
 
     public administrators: string[] | undefined
-    public fastifyUtilities: object | undefined
+    public fastifyUtilities: any[] = []
 
-    public categories: any[] = [];
+    public categories: any[] = []
 
-    private client: Client | undefined
+    private client: Client = {
+        id: '',
+        secret: '',
+    }
 
     private discordClient: any
 
@@ -220,7 +223,7 @@ export class Dashboard {
      * Set the fastify utilities to use.
      * @returns {Dashboard} - The Dashboard instance.
      */
-    public setFastifyUtilities (fastifyUtilities: object) {
+    public setFastifyUtilities (fastifyUtilities: any[] = []) {
         this.fastifyUtilities = fastifyUtilities
         return this
     }
@@ -239,7 +242,6 @@ export class Dashboard {
             await this.prepareNext()
             this.registerFastifyEngine()
             this.registerFastifySession(this.fastify)
-            // @ts-ignore
             for (const util of this.fastifyUtilities) {
                 this.fastify.register(util[0], util[1] || {})
             }
@@ -256,7 +258,6 @@ export class Dashboard {
             this.fastify = fastifyModule({logger: false})
             this.registerFastifyEngine()
             this.registerFastifySession(this.fastify)
-            // @ts-ignore
             for (const util of this.fastifyUtilities) {
                 this.fastify.register(util[0], util[1] || {})
             }
@@ -358,7 +359,6 @@ export class Dashboard {
     private registerFastifySession (fastify: any) {
         fastify.register(fastifyCookie)
         fastify.register(fastifySession, {
-            // @ts-ignore
             secret: this.sessionSecret || `${this.discordClient.id}+${this.client.id}`,
             cookie: { secure: Boolean(this.SSL?.httpRedirect) },
             expires: this.sessionExpires || 1000*60*60*24*7, // 7 days
@@ -400,9 +400,7 @@ export class Dashboard {
             scope: ["identify", "guilds", "guilds.join"],
             credentials: {
                 client: {
-                    // @ts-ignore
                     id: this.client.id,
-                    // @ts-ignore
                     secret: this.client.secret
                 },
                 auth: fastifyOauth2.DISCORD_CONFIGURATION
