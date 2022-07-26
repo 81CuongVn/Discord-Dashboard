@@ -26,7 +26,7 @@ import {ErrorThrower} from "./utils/ErrorThrower"
  * @example
  * const DBD = require('discord-dashboard')
  *
- * const Dashboard = new DBD.Dashboard(DBD.Engine.NEXT)
+ * const Dashboard = new DBD.Dashboard(DBD.Engines.NEXT)
  *      .setDev(true)
  *      .setPort(3000)
  *      // ...
@@ -40,7 +40,9 @@ export class Dashboard {
      *
      * Perform all options to set in the Dashboard by adding functions to the class (before using the start method).
      */
-    constructor(engine: 'ejs' | 'next' = 'next') {
+    constructor(engine: 'ejs' | 'next') {
+        if(!engine)
+            ErrorThrower('Engine is required. Pass it as the first and only class constructor parameter (supported engines are accessible from DBD.Engines).')
         if(engine != 'ejs' && engine != 'next')
             ErrorThrower(`The engine must be either "ejs" or "next". Received "${engine}" which is not a valid supported engine.`)
         this.engine = engine
@@ -265,7 +267,7 @@ export class Dashboard {
             })
             return this
         }else{
-            ErrorThrower('Only "next" and "ejs" engines are officially supported.')
+            ErrorThrower(`Only "next" and "ejs" engines are officially supported (requested ${this.engine}).`)
         }
     }
 
