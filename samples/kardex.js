@@ -18,7 +18,7 @@ const Theme = new DefaultTheme()
         icon: 'home',
         name: 'Test',
         section: 'LoL',
-    });
+    })
 
 new Dashboard(Engines.NEXT)
     .setDev(true)
