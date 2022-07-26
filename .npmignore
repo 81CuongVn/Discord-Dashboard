@@ -3,7 +3,7 @@ node_modules
 src
 test
 tsconfig.json
-test/.env
+samples/.env
 sessions
 test.md
 jsdoc.json
