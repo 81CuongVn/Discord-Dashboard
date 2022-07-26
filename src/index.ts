@@ -292,7 +292,7 @@ export class Dashboard {
                 shouldBeDisplayed: ()=>true,
                 permissionsValidate: ()=>null,
                 serverSideValidation: ()=>null,
-            }, option);
+            }, option)
             options.push(option)
         }
         return options
