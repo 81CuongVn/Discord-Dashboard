@@ -234,21 +234,38 @@ export class Dashboard {
                 console.log('Also, each change in the theme pages source code will not be reflected in the dashboard after turning off development mode. You\'ll have to run the build command inside theme folder to build the changes into production environment.')
             }
             this.fastify = fastifyModule({logger: false})
-            const nextPrepared = await this.prepareNext()
-            this.registerFastifyNext()
+            await this.prepareNext()
+            this.registerFastifyEngine()
             this.registerFastifySession(this.fastify)
             // @ts-ignore
             for (const util of this.fastifyUtilities) {
                 this.fastify.register(util[0], util[1] || {})
             }
-            const FastifyApp = await this.prepareFastify(nextPrepared)
+            const FastifyApp = await this.prepareFastify()
+
+            await FastifyApp.listen({
+                port: this.port,
+            })
+            return this
+        }else if(this.engine == 'ejs') {
+            if (this.dev) {
+                console.log('Running on EJS engine in development mode. Please note that the dashboard will not send statistics to Assistants Services.')
+            }
+            this.fastify = fastifyModule({logger: false})
+            this.registerFastifyEngine()
+            this.registerFastifySession(this.fastify)
+            // @ts-ignore
+            for (const util of this.fastifyUtilities) {
+                this.fastify.register(util[0], util[1] || {})
+            }
+            const FastifyApp = await this.prepareFastify()
 
             await FastifyApp.listen({
                 port: this.port,
             })
             return this
         }else{
-            ErrorThrower('Only "next" engine is officially supported.')
+            ErrorThrower('Only "next" and "ejs" engines are officially supported.')
         }
     }
 
@@ -318,12 +335,18 @@ export class Dashboard {
     }
 
     /**
-     * Register the next app inside fastify.
+     * Register the engine inside fastify.
      */
-    private registerFastifyNext () {
-        // @ts-ignore
-        this.theme.registerFastifyNext(this.fastify, this.dev)
-        return
+    private registerFastifyEngine () {
+        if(this.engine == 'next'){
+            this.theme.registerFastifyNext(this.fastify, this.dev)
+            return
+        }else if(this.engine == 'ejs'){
+            this.theme.registerFastifyEJS(this.fastify, this.dev)
+            return
+        }else{
+            ErrorThrower(`Only "next" and "ejs" engines are officially supported (passed ${this.engine}).`)
+        }
     }
 
     /**
@@ -415,7 +438,7 @@ export class Dashboard {
      * @returns {Promise<FastifyInstance<http.Server, RawRequestDefaultExpression<http.Server>, RawReplyDefaultExpression<http.Server>, boolean> | PromiseLike<FastifyInstance<http.Server, RawRequestDefaultExpression<http.Server>, RawReplyDefaultExpression<http.Server>, boolean>> | FastifyInstance<https.Server, RawRequestDefaultExpression<https.Server>, RawReplyDefaultExpression<https.Server>, boolean> | PromiseLike<FastifyInstance<https.Server, RawRequestDefaultExpression<https.Server>, RawReplyDefaultExpression<https.Server>, boolean>> | FastifyInstance<http2.Http2Server, RawRequestDefaultExpression<http2.Http2Server>, RawReplyDefaultExpression<http2.Http2Server>, boolean> | PromiseLike<FastifyInstance<http2.Http2Server, RawRequestDefaultExpression<http2.Http2Server>, RawReplyDefaultExpression<http2.Http2Server>, boolean>> | FastifyInstance<http2.Http2SecureServer, RawRequestDefaultExpression<http2.Http2SecureServer>, RawReplyDefaultExpression<http2.Http2SecureServer>, boolean> | PromiseLike<FastifyInstance<http2.Http2SecureServer, RawRequestDefaultExpression<http2.Http2SecureServer>, RawReplyDefaultExpression<http2.Http2SecureServer>, boolean>>>}
      * @param settings
      */
-    private prepareFastify = async (settings: { next_app: any, next_handler: any }) => {
+    private prepareFastify = async () => {
         const fastify = this.fastify
 
         this.registerFastifyStatic()

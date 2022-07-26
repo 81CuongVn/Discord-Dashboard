@@ -1,6 +1,6 @@
 node_modules
 .idea
 dist
-test/.env
+samples/.env
 sessions
 Themes

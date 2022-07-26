@@ -33,7 +33,7 @@ npm manifest:
     },
     "name": "discord-dashboard",
     "version": "beta-3.0.0",
-    "main": "dist/index.js",
+    "main": "dist/kardex.js",
     "license": "MIT",
     "dependencies": {
       "fastify": "^4.3.0"
