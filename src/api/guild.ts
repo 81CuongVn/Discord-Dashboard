@@ -30,11 +30,11 @@ export const router: (props: any)=>void = (props: { fastify: any, discordClient:
                         option.reason = option.type.disabled.reason
                     }else{
                         // If is disabled for user with prePermissionsCheck
-                        if(option.prePermissionsCheck){
-                            const prePermissionsCheck = await option.prePermissionsCheck({ member, guild })
-                            if(prePermissionsCheck) {
+                        if(option.permissionsValidate){
+                            const permissionsValidate = await option.permissionsValidate({ member, guild })
+                            if(permissionsValidate) {
                                 option.allowed = false
-                                option.reason = prePermissionsCheck
+                                option.reason = permissionsValidate
                             }
                         }
                     }
@@ -81,13 +81,13 @@ export const router: (props: any)=>void = (props: { fastify: any, discordClient:
                     }
 
                     //  TEST: If is disabled for user with prePermissionsCheck
-                    if(optionData.prePermissionsCheck){
-                        const prePermissionsCheck = await optionData.prePermissionsCheck({  })
-                        if(prePermissionsCheck) {
+                    if(optionData.permissionsValidate){
+                        const permissionsValidate = await optionData.permissionsValidate({  })
+                        if(permissionsValidate) {
                             errored_messages.push({
                                 category: categoryData.id,
                                 option: optionData.id,
-                                error: prePermissionsCheck
+                                error: permissionsValidate
                             })
                             continue
                         }

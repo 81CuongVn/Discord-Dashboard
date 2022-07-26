@@ -12,7 +12,7 @@ module.exports = {
         return true
     },
     // display with error
-    prePermissionsCheck: async ({ member }) => {
+    permissionsValidate: async ({ member }) => {
         const blacklisted = true
         if(blacklisted)return "You are blacklisted from this option"
 

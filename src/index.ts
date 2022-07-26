@@ -26,18 +26,24 @@ import {ErrorThrower} from "./utils/ErrorThrower"
  * @example
  * const DBD = require('discord-dashboard')
  *
- * const Dashboard = new DBD.Dashboard()
- *      .setPort(3000)
+ * const Dashboard = new DBD.Dashboard(DBD.Engine.NEXT)
  *      .setDev(true)
+ *      .setPort(3000)
+ *      // ...
  *      .start()
  */
 export class Dashboard {
+    public engine: 'ejs' | 'next'
     /**
      * Constructor does not require any parameters.
+     * Optional parameter is engine to use ('next' by default). Theme engine must be the same as the dashboard engine.
      *
      * Perform all options to set in the Dashboard by adding functions to the class (before using the start method).
      */
-    constructor() {
+    constructor(engine: 'ejs' | 'next' = 'next') {
+        if(engine != 'ejs' && engine != 'next')
+            ErrorThrower(`The engine must be either "ejs" or "next". Received "${engine}" which is not a valid supported engine.`)
+        this.engine = engine
     }
     private fastify: any
 
@@ -102,6 +108,8 @@ export class Dashboard {
      * @returns {Dashboard} - The Dashboard instance.
      */
     public setTheme(theme: any) {
+        if(theme.engine != this.engine)
+            ErrorThrower(`${theme.name} doesn't support "${this.engine}" engine. Please use "${theme.engine}" engine.`)
         this.theme = theme
         return this
     }
@@ -220,24 +228,28 @@ export class Dashboard {
      * @returns {Promise<Dashboard>} - The Dashboard instance.
      */
     public start = async () => {
-        if(this.dev) {
-            console.log('Dashboard is in development mode. Please note that the dashboard will not send statistics to Assistants Services.')
-            console.log('Also, each change in the theme pages source code will not be reflected in the dashboard after turning off development mode. You\'ll have to run the build command inside theme folder to build the changes into production environment.')
-        }
-        this.fastify = fastifyModule({ logger: false })
-        const nextPrepared = await this.prepareNext()
-        this.registerFastifyNext()
-        this.registerFastifySession(this.fastify)
-        // @ts-ignore
-        for(const util of this.fastifyUtilities) {
-            this.fastify.register(util[0], util[1]||{})
-        }
-        const FastifyApp = await this.prepareFastify(nextPrepared)
+        if(this.engine == 'next') {
+            if (this.dev) {
+                console.log('Dashboard is in development mode. Please note that the dashboard will not send statistics to Assistants Services.')
+                console.log('Also, each change in the theme pages source code will not be reflected in the dashboard after turning off development mode. You\'ll have to run the build command inside theme folder to build the changes into production environment.')
+            }
+            this.fastify = fastifyModule({logger: false})
+            const nextPrepared = await this.prepareNext()
+            this.registerFastifyNext()
+            this.registerFastifySession(this.fastify)
+            // @ts-ignore
+            for (const util of this.fastifyUtilities) {
+                this.fastify.register(util[0], util[1] || {})
+            }
+            const FastifyApp = await this.prepareFastify(nextPrepared)
 
-        await FastifyApp.listen({
-            port: this.port,
-        })
-        return this
+            await FastifyApp.listen({
+                port: this.port,
+            })
+            return this
+        }else{
+            ErrorThrower('Only "next" engine is officially supported.')
+        }
     }
 
 
@@ -249,13 +261,18 @@ export class Dashboard {
         const files = fs.readdirSync(optionsPath).filter(file => !file.endsWith('.disabled.js') && file.endsWith('.js'))
         const options = []
         for(const Option of files) {
-            const option = require(path.join(optionsPath, `./${Option}`))
+            let option = require(path.join(optionsPath, `./${Option}`))
             option.type = option.type.settings
             let optionId = option.name
             while(optionId.includes(' '))
                 optionId = optionId.replace(' ', '_')
             optionId = optionId.toLowerCase()
             option.id = optionId
+            option = Object.assign({
+                shouldBeDisplayed: ()=>true,
+                permissionsValidate: ()=>null,
+                serverSideValidation: ()=>null,
+            }, option);
             options.push(option)
         }
         return options
@@ -468,4 +485,12 @@ import { TextInput } from './formtypes/TextInput'
 
 export const FormTypes = {
     TextInput,
+}
+
+const EJS: 'ejs' = 'ejs'
+const NEXT: 'next' = 'next'
+
+export const Engines = {
+    EJS,
+    NEXT,
 }

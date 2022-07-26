@@ -9,7 +9,7 @@ const helmet = require('@fastify/helmet')
 
 client.login(process.env.BOT_TOKEN)
 
-const { Dashboard } = require('../dist/index')
+const { Dashboard, Engines } = require('../dist/index')
 const DefaultTheme = require('../Themes/KardexTheme')
 const Theme = new DefaultTheme()
     .addCustomPage({
@@ -20,7 +20,7 @@ const Theme = new DefaultTheme()
         section: 'LoL',
     });
 
-new Dashboard()
+new Dashboard(Engines.NEXT)
     .setDev(true)
     .registerProject({
         accountToken: process.env.ASSISTANTS_SERVICES_ACCOUNT_TOKEN,
