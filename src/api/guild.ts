@@ -40,12 +40,11 @@ export const router: (props: any)=>void = (props: { fastify: any, discordClient:
                     }
 
                     // Get actual value
-                    option.value = await option.get({ member, guild })
-                    if(option.value == null)option.value = option.type.defaultValue
+                    let tempValue = await option.get({ member, guild })
+                    option.value = tempValue == null ? option.type.defaultValue : tempValue
 
                     // Delete unnecessary properties
                     delete option.type.disabled
-                    delete option.type.defaultValue
 
                     // Add to return
                     return_categories[return_categories.length-1].options.push(JSON.parse(JSON.stringify(option)))
@@ -55,7 +54,7 @@ export const router: (props: any)=>void = (props: { fastify: any, discordClient:
             return reply.send(return_categories)
         })
 
-        instance.post('/settings', async (request: any, reply: any) => {
+        instance.post('/:guild_id/settings', async (request: any, reply: any) => {
             const { settings } = request.body
             const errored_messages: object[] = []
             for(const category_body of settings){
@@ -105,7 +104,7 @@ export const router: (props: any)=>void = (props: { fastify: any, discordClient:
                     }
 
                     // All test passed, set new value
-                    await optionData.set({newData: option_body.newData})
+                    await optionData.set({newData: option_body.value})
                 }
             }
             return reply.send({error:false,errored_messages})

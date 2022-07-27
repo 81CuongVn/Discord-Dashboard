@@ -2,7 +2,7 @@ import React from 'react'
 
 import TextInput from './formtypes/TextInput'
 
-export default function CategoryOptions({ category }) {
+export default function CategoryOptions({ category, UpdateOptionValue }) {
     return (
         <div>
             <h1>{category.name}</h1>
@@ -10,7 +10,7 @@ export default function CategoryOptions({ category }) {
                 {
                     category.options.map(option => {
                         if(option.type.name == 'TextInput'){
-                            return <TextInput key={option.id} option={option} />
+                            return <TextInput key={option.id} option={option} category_id={category.id} UpdateOptionValue={UpdateOptionValue} />
                         }
                     })
                 }

@@ -292,7 +292,21 @@ export class Dashboard {
                 optionId = optionId.replace(' ', '_')
             optionId = optionId.toLowerCase()
             option.id = optionId
+
+            // THEME OPTIONS
+            //
+            // resolveTypes:
+            // getSettings - get the settings of the option after calling getSettings function
+            // direct - get the settings of the option directly
+
+            if(option.themeOptions && option.themeOptions.resolveType == 'getSettings'){
+                option.themeOptions = JSON.parse(JSON.stringify(option.themeOptions.getSettings()))
+            }else if(option.themeOptions && option.themeOptions.resolveType == 'direct'){
+                option.themeOptions = JSON.parse(JSON.stringify(option.themeOptions))
+            }
+
             option = Object.assign({
+                themeOptions: {},
                 shouldBeDisplayed: ()=>true,
                 permissionsValidate: ()=>null,
                 serverSideValidation: ()=>null,

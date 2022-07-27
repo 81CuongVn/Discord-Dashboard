@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react'
 import GuildsList from "../components/GuildsList"
 
 import FetchOptions from "../utils/FetchOptions"
+import PostOptions from "../utils/PostOptions"
+
 import CategoryOptions from "../components/CategoryOptions"
 
 export async function getServerSideProps ({ query }) {
@@ -20,9 +22,34 @@ export default function Index({ user, navigation, guild }) {
     }
 
     const [settings, setSettings] = useState([])
+    const [displaySave, setDisplaySave] = useState(false) // displaySave is a boolean to show/hide the save button
+    const [saving, setSaving] = useState(false) // saving is a boolean to show/hide the saving indicator
+
     useEffect(() => {
         FetchOptions(guild.id).then(setSettings)
     }, [])
+
+    const [settingsUpdated, setSettingsUpdated] = useState([])
+
+    const UpdateOptionValue = ({category_id, option_id, newData}) => {
+        setDisplaySave(true)
+        if(!settingsUpdated.find(category=>category.id===category_id)){
+            settingsUpdated.push({id: category_id, options: []})
+        }
+        if(!settingsUpdated.find(category=>category.id===category_id).options.find(option=>option.id===option_id)){
+            settingsUpdated.find(category=>category.id===category_id).options.push({id: option_id, value: newData})
+        }else{
+            settingsUpdated.find(category=>category.id===category_id).options.find(option=>option.id===option_id).value = newData
+        }
+    }
+
+    const SaveClicked = async () => {
+        setSaving(true)
+        const res = await PostOptions(guild.id, settingsUpdated)
+        console.log(res)
+        setSaving(false)
+        setDisplaySave(false)
+    }
 
     return (
         <div>
@@ -34,7 +61,7 @@ export default function Index({ user, navigation, guild }) {
                 <div>
                     {
                         settings.map(category=>{
-                            return <CategoryOptions key={category.id} category={category} />
+                            return <CategoryOptions key={category.id} category={category} UpdateOptionValue={UpdateOptionValue} />
                         })
                     }
                 </div>
@@ -42,6 +69,12 @@ export default function Index({ user, navigation, guild }) {
                 <div>
                     <p>Loading...</p>
                 </div>
+            }
+            {
+                displaySave ?
+                <a href={"#post"} onClick={SaveClicked}>Save your settings!</a>
+                    :
+                <div>Not updated yet.</div>
             }
         </div>
     )

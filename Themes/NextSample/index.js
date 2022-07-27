@@ -1,6 +1,16 @@
 const path = require('path')
 const next = require('next')
 
+const ThemeOptions = {
+    TextInputManager: require('./themeoptionsmanagers/TextInput'),
+    TextInputObjects: {
+        optionContainer: 'optionContainer',
+        optionTitle: 'optionTitle',
+        optionDescription: 'optionDescription',
+        optionInput: 'optionInput',
+    }
+}
+
 class Theme {
     codename = 'nxts'
     name = 'Next Sample Theme'
@@ -151,5 +161,5 @@ class Theme {
     }
 }
 
-module.exports = Theme
-
+module.exports.Provider = Theme
+module.exports.ThemeOptions = ThemeOptions

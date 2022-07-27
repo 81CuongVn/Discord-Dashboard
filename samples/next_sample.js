@@ -11,7 +11,7 @@ client.login(process.env.BOT_TOKEN)
 
 const { Dashboard, Engines } = require('../dist/index')
 const DefaultTheme = require('../Themes/NextSample')
-const Theme = new DefaultTheme()
+const Theme = new DefaultTheme.Provider()
     .addCustomPage({
         url: '/test',
         components: [],
@@ -21,7 +21,7 @@ const Theme = new DefaultTheme()
     })
 
 new Dashboard(Engines.NEXT)
-    .setDev(true)
+    .setDev(false)
     .registerProject({
         accountToken: process.env.ASSISTANTS_SERVICES_ACCOUNT_TOKEN,
         projectId: process.env.DISCORD_DASHBOARD_PROJECT_ID
@@ -53,11 +53,10 @@ new Dashboard(Engines.NEXT)
     ])
     .start()
     .then((instance) => {
-        /*console.log(
+        console.log(
             `Dashboard started on ${instance.port} port with ${instance.theme.name} ` +
             `(codename: ${instance.theme.codename}) theme in ${instance.dev ? 'development' : 'production'} mode.`
         )
-        console.log(JSON.stringify(instance.categories, null, 2))*/
     })
     .catch((err) => {
         console.error(err)
