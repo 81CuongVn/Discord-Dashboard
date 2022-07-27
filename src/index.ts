@@ -282,7 +282,11 @@ export class Dashboard {
         const options = []
         for(const Option of files) {
             let option = require(path.join(optionsPath, `./${Option}`))
+            if(!option.type)
+                return ErrorThrower(`Option ${Option} doesn't have a type defined.`)
             option.type = option.type.settings
+            if(!option.name)
+                return ErrorThrower(`Option ${Option} doesn't have a name defined.`)
             let optionId = option.name
             while(optionId.includes(' '))
                 optionId = optionId.replace(' ', '_')
@@ -319,9 +323,9 @@ export class Dashboard {
                 if(optionsIds.includes(option.id))
                     ErrorThrower(`Option id ${option.id} of ${option.name} option is not unique.`)
                 if(!option.get || typeof option.get !== 'function')
-                    ErrorThrower(`Option ${option.name} in ${category.name} category has no get function or it's type isn't function.`)
+                    ErrorThrower(`Option ${option.name} in ${category.name} category has no get function or it's type isn't a function.`)
                 if(!option.set || typeof option.set !== 'function')
-                    ErrorThrower(`Option ${option.name} in ${category.name} category has no set function or it's type isn't function.`)
+                    ErrorThrower(`Option ${option.name} in ${category.name} category has no set function or it's type isn't a function.`)
                 optionsIds.push(option.id)
             }
         }
