@@ -10,7 +10,7 @@ export default function CategoryOptions({ category }) {
                 {
                     category.options.map(option => {
                         if(option.type.name == 'TextInput'){
-                            return <TextInput key={option.id} option={{...option}} />
+                            return <TextInput key={option.id} option={option} />
                         }
                     })
                 }
