@@ -9,7 +9,8 @@ const helmet = require('@fastify/helmet')
 
 client.login(process.env.BOT_TOKEN)
 
-const { Dashboard, Engines } = require('../dist/index')
+const { Dashboard, Engines, DiscordPermissions } = require('../dist/index')
+
 const DefaultTheme = require('../Themes/NextSample')
 const Theme = new DefaultTheme.Provider()
     .addCustomPage({
@@ -26,6 +27,7 @@ new Dashboard(Engines.NEXT)
         accountToken: process.env.ASSISTANTS_SERVICES_ACCOUNT_TOKEN,
         projectId: process.env.DISCORD_DASHBOARD_PROJECT_ID
     })
+    .setRequiredPermissions([DiscordPermissions.ADMINISTRATOR])
     .setTheme(Theme)
     .setOptionsFolder(path.join(__dirname, './DiscordDashboardCategories'))
     .setPort(process.env.PORT)

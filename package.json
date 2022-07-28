@@ -22,7 +22,7 @@
   "main": "dist/index.d.ts",
   "license": "CC BY-NC-SA 4.0",
   "scripts": {
-    "docs": "jsdoc src/index.ts src/formtypes/TextInput.ts -c jsdoc.json -u ./Tutorials"
+    "docs": "jsdoc src/index.ts src/formtypes/TextInput.ts src/types/types.ts -c jsdoc.json -u ./Tutorials"
   },
   "dependencies": {
     "@fastify/cookie": "6.*",

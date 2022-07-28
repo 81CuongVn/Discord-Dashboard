@@ -13,7 +13,7 @@ export default function TextInput({ category_id, option: { themeOptions, name, d
             return alert(CSR)
         setOptionValue(e.target.value)
     }
-
+    
     return (
         <div style={Object.assign(themeOptions?.customStyles?.optionContainer || { backgroundColor: 'none' }, {})}> {/* optionContainer */}
             <h1>{name}</h1>

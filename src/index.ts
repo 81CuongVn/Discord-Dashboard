@@ -70,6 +70,10 @@ export class Dashboard {
         secret: '',
     }
 
+    public requiredPermissions: [string,number][] = [
+        ['ADMINISTRATOR', 0x8],
+    ]
+
     private discordClient: any
 
     public userStatic: UserStatic | undefined
@@ -84,6 +88,16 @@ export class Dashboard {
      */
     public setDev(dev: boolean) {
         this.dev = dev
+        return this
+    }
+
+    /**
+     * Set required permissions to use.
+     * @param {Array<Array<String, Number>>} permissions - An array of permissions to use (see DBD.Permissions).
+     * @returns {Dashboard} - The Dashboard instance.
+     */
+    public setRequiredPermissions(permissions: [string,number][]) {
+        this.requiredPermissions = permissions
         return this
     }
 
@@ -273,9 +287,8 @@ export class Dashboard {
     }
 
 
-    /**
+    /*
      * Resolve the options to use.
-     * @param {String} optionsPath - The path to the options folder.
      */
     private resolveOptions (optionsPath: string) {
         const files = fs.readdirSync(optionsPath).filter(file => !file.endsWith('.disabled.js') && file.endsWith('.js'))
@@ -316,7 +329,7 @@ export class Dashboard {
         return options
     }
 
-    /**
+    /*
      * Verify options list is unique and valid.
      */
     private verifyOptions () {
@@ -345,9 +358,8 @@ export class Dashboard {
         }
     }
 
-    /**
+    /*
      * Prepare the next app.
-     * @returns {Promise<{next_handler: RequestHandler, next_app: NextServer}>}
      */
     private prepareNext = async () => {
         const { next_app, next_handler } = this.theme.initNext(this.dev)
@@ -355,7 +367,7 @@ export class Dashboard {
         return { next_app, next_handler }
     }
 
-    /**
+    /*
      * Register the engine inside fastify.
      */
     private registerFastifyEngine () {
@@ -370,9 +382,8 @@ export class Dashboard {
         }
     }
 
-    /**
+    /*
      * Register the fastify session plugin with fastify cookies.
-     * @param fastify - The fastify instance.
      */
     private registerFastifySession (fastify: any) {
         fastify.register(fastifyCookie)
@@ -385,7 +396,7 @@ export class Dashboard {
         })
     }
 
-    /**
+    /*
      * Register the fastify static (for module, theme, and user).
      */
     private registerFastifyStatic () {
@@ -409,7 +420,7 @@ export class Dashboard {
         }
     }
 
-    /**
+    /*
      * Register the fastify oauth2 plugin with the Discord client OAuth2 credentials.
      */
     private registerFastifyOAuth2 () {
@@ -428,16 +439,15 @@ export class Dashboard {
         })
     }
 
-    /**
+    /*
      * Init Discord Dashboard API.
      */
     private initFastifyApi () {
-        ApiRouter.router({ fastify: this.fastify, discordClient: this.discordClient, categories: this.categories })
+        ApiRouter.router(this)
     }
 
-    /**
+    /*
      * Init theme pages.
-     * @returns {Promise<void>}
      */
     private initFastifyThemePages = async () => {
         const ThemePages = await this.theme.getPages({ ...this })
@@ -451,10 +461,8 @@ export class Dashboard {
         }
     }
 
-    /**
+    /*
      * Prepare the fastify app.
-     * @returns {Promise<FastifyInstance<http.Server, RawRequestDefaultExpression<http.Server>, RawReplyDefaultExpression<http.Server>, boolean> | PromiseLike<FastifyInstance<http.Server, RawRequestDefaultExpression<http.Server>, RawReplyDefaultExpression<http.Server>, boolean>> | FastifyInstance<https.Server, RawRequestDefaultExpression<https.Server>, RawReplyDefaultExpression<https.Server>, boolean> | PromiseLike<FastifyInstance<https.Server, RawRequestDefaultExpression<https.Server>, RawReplyDefaultExpression<https.Server>, boolean>> | FastifyInstance<http2.Http2Server, RawRequestDefaultExpression<http2.Http2Server>, RawReplyDefaultExpression<http2.Http2Server>, boolean> | PromiseLike<FastifyInstance<http2.Http2Server, RawRequestDefaultExpression<http2.Http2Server>, RawReplyDefaultExpression<http2.Http2Server>, boolean>> | FastifyInstance<http2.Http2SecureServer, RawRequestDefaultExpression<http2.Http2SecureServer>, RawReplyDefaultExpression<http2.Http2SecureServer>, boolean> | PromiseLike<FastifyInstance<http2.Http2SecureServer, RawRequestDefaultExpression<http2.Http2SecureServer>, RawReplyDefaultExpression<http2.Http2SecureServer>, boolean>>>}
-     * @param settings
      */
     private prepareFastify = async () => {
         const fastify = this.fastify
@@ -519,7 +527,7 @@ export class Dashboard {
  * @property {any} type - The type of the option.
  * @property {OptionSetter} set - The function to set the option value.
  * @property {OptionGetter} get - The function to get the option value.
- * @namespace Option Structure
+ * @interface [Option Structure]
  */
 
 import { TextInput } from './formtypes/TextInput'
@@ -534,4 +542,91 @@ const NEXT: 'next' = 'next'
 export const Engines = {
     EJS,
     NEXT,
+}
+
+/**
+ * @interface Permissions
+ * @description Discord permissions flags.
+ *
+ * @prop CREATE_INSTANT_INVITE - Create instant invites.
+ * @prop KICK_MEMBERS - Kick members.
+ * @prop BAN_MEMBERS - Ban members.
+ * @prop ADMINISTRATOR - Administrator permissions.
+ * @prop MANAGE_CHANNELS - Manage channels.
+ * @prop MANAGE_GUILD - Manage the guild.
+ * @prop ADD_REACTIONS - Add reactions.
+ * @prop VIEW_AUDIT_LOG - View audit logs.
+ * @prop VIEW_CHANNEL - View channels.
+ * @prop SEND_MESSAGES - Send messages.
+ * @prop SEND_TTS_MESSAGES - Send TTS messages.
+ * @prop MANAGE_MESSAGES - Manage messages.
+ * @prop EMBED_LINKS - Embed links.
+ * @prop ATTACH_FILES - Attach files.
+ * @prop READ_MESSAGE_HISTORY - Read message history.
+ * @prop MENTION_EVERYONE - Mention everyone.
+ * @prop USE_EXTERNAL_EMOJIS - Use external emojis.
+ * @prop CONNECT - Connect to voice.
+ * @prop SPEAK - Speak in voice.
+ * @prop MUTE_MEMBERS - Mute members.
+ * @prop DEAFEN_MEMBERS - Deafen members.
+ * @prop MOVE_MEMBERS - Move members.
+ * @prop USE_VAD - Use voice activity detection.
+ * @prop CHANGE_NICKNAME - Change nickname.
+ * @prop MANAGE_NICKNAMES - Manage nicknames.
+ * @prop MANAGE_ROLES - Manage roles.
+ * @prop MANAGE_WEBHOOKS - Manage webhooks.
+ * @prop MANAGE_EMOJIS_AND_STICKERS - Manage emojis and stickers.
+ * @prop USE_APPLICATION_COMMANDS - Use application commands.
+ * @prop REQUEST_TO_SPEAK - Request to speak.
+ * @prop MANAGE_EVENTS - Manage events.
+ * @prop MANAGE_THREADS - Manage threads.
+ * @prop CREATE_PUBLIC_THREADS - Create public threads.
+ * @prop CREATE_PRIVATE_THREADS - Create private threads.
+ * @prop USE_EXTERNAL_STICKERS - Use external stickers.
+ * @prop SEND_MESSAGES_IN_THREADS - Send messages in threads.
+ * @prop START_EMBEDDED_ACTIVITIES - Start embedded activities.
+ * @prop MODERATE_MEMBERS - Moderate members.
+ */
+export const DiscordPermissions = {
+    CREATE_INSTANT_INVITE: ['CREATE_INSTANT_INVITE', 0x1],
+    KICK_MEMBERS: ['KICK_MEMBERS', 0x2],
+    BAN_MEMBERS: ['BAN_MEMBERS', 0x4],
+    ADMINISTRATOR: ['ADMINISTRATOR', 0x8],
+    MANAGE_CHANNELS: ['MANAGE_CHANNELS', 0x10],
+    MANAGE_GUILD: ['MANAGE_GUILD', 0x20],
+    ADD_REACTIONS: ['ADD_REACTIONS', 0x40],
+    VIEW_AUDIT_LOG: ['VIEW_AUDIT_LOG', 0x80],
+    PRIORITY_SPEAKER: ['PRIORITY_SPEAKER', 0x100],
+    STREAM: ['STREAM', 0x200],
+    VIEW_CHANNEL: ['VIEW_CHANNEL', 0x400],
+    SEND_MESSAGES: ['SEND_MESSAGES', 0x800],
+    SEND_TTS_MESSAGES: ['SEND_TTS_MESSAGES', 0x1000],
+    MANAGE_MESSAGES: ['MANAGE_MESSAGES', 0x2000],
+    EMBED_LINKS: ['EMBED_LINKS', 0x4000],
+    ATTACH_FILES: ['ATTACH_FILES', 0x8000],
+    READ_MESSAGE_HISTORY: ['READ_MESSAGE_HISTORY', 0x10000],
+    MENTION_EVERYONE: ['MENTION_EVERYONE', 0x20000],
+    USE_EXTERNAL_EMOJIS: ['USE_EXTERNAL_EMOJIS', 0x40000],
+    VIEW_GUILD_INSIGHTS: ['VIEW_GUILD_INSIGHTS', 0x80000],
+    CONNECT: ['CONNECT', 0x100000],
+    SPEAK: ['SPEAK', 0x200000],
+    MUTE_MEMBERS: ['MUTE_MEMBERS', 0x400000],
+    DEAFEN_MEMBERS: ['DEAFEN_MEMBERS', 0x800000],
+    MOVE_MEMBERS: ['MOVE_MEMBERS', 0x1000000],
+    USE_VAD: ['USE_VAD', 0x2000000],
+    CHANGE_NICKNAME: ['CHANGE_NICKNAME', 0x4000000],
+    MANAGE_NICKNAMES: ['MANAGE_NICKNAMES', 0x8000000],
+    MANAGE_ROLES: ['MANAGE_ROLES', 0x10000000],
+    MANAGE_WEBHOOKS: ['MANAGE_WEBHOOKS', 0x20000000],
+    MANAGE_EMOJIS_AND_STICKERS: ['MANAGE_EMOJIS_AND_STICKERS', 0x40000000],
+    USE_APPLICATION_COMMANDS: ['USE_APPLICATION_COMMANDS', 0x80000000],
+    REQUEST_TO_SPEAK: ['REQUEST_TO_SPEAK', 0x100000000],
+    MANAGE_EVENTS: ['MANAGE_EVENTS', 0x200000000],
+    MANAGE_THREADS: ['MANAGE_THREADS', 0x400000000],
+    CREATE_PUBLIC_THREADS: ['CREATE_PUBLIC_THREADS', 0x800000000],
+    CREATE_PRIVATE_THREADS: ['CREATE_PRIVATE_THREADS', 0x1000000000],
+    USE_EXTERNAL_STICKERS: ['USE_EXTERNAL_STICKERS', 0x2000000000],
+    SEND_MESSAGES_IN_THREADS: ['SEND_MESSAGES_IN_THREADS', 0x4000000000],
+    START_EMBEDDED_ACTIVITIES: ['START_EMBEDDED_ACTIVITIES', 0x8000000000],
+    MODERATE_MEMBERS: ['MODERATE_MEMBERS', 0x10000000000]
 }

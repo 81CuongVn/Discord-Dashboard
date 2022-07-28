@@ -1,4 +1,4 @@
-export const router: (props: any)=>void = (props: { fastify: any, discordClient: any, categories: any }) => {
+export const router: (props: any)=>void = (props: { requiredPermissions: [string,number][], fastify: any, discordClient: any, categories: any }) => {
     props.fastify.register((instance: any, opts: any, next: any)=>{
         instance.get('/:guild_id/settings', async (request: any, reply: any) => {
             const member_id = request.session?.user?.id
