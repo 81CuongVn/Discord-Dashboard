@@ -4,7 +4,7 @@ const {TextInputManager, TextInputObjects} = require('../../../Themes/NextSample
 let temp = null
 
 module.exports = {
-    name: 'Prefix',
+    name: 'Prefix but music!',
     description: 'Change bot prefix easily',
     type: new TextInput()
         .setPlaceholder('Prefix')
@@ -24,7 +24,7 @@ module.exports = {
     },
     // display with error
     permissionsValidate: async ({ member }) => {
-        const blacklisted = true
+        const blacklisted = false
         if(blacklisted)return "You are blacklisted from this option"
 
         return null

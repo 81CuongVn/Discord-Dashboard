@@ -2,9 +2,13 @@ import React, {useState, useEffect} from 'react'
 
 export default function TextInput({ category_id, option: { themeOptions, name, description, type, id, allowed, reason, value }, UpdateOptionValue }) {
     const [optionValue, setOptionValue] = useState(value) // optionValue is the value of the option (initial value = value from API endpoint [returned in option get function])
+    const [changesCount, setChangesCount] = useState(0)
 
     useEffect(()=>{
-        UpdateOptionValue({category_id, option_id: id, newData: optionValue})
+        if(changesCount > 0){
+            UpdateOptionValue({category_id, option_id: id, newData: optionValue})
+        }
+        setChangesCount(changesCount+1)
     }, [optionValue])
 
     const handleChange = (e) => {

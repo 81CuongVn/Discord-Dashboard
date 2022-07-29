@@ -66,8 +66,14 @@ export const router: (props: any)=>void = (props: { requiredPermissions: [string
                     if(optionData.type?.disabled?.bool == true) {
                         //  TEST: If is globally disabled with option type
                         errored_messages.push({
-                            category: categoryData.id,
-                            option: optionData.id,
+                            category: {
+                                id: categoryData.id,
+                                name: categoryData.name,
+                            },
+                            option: {
+                                id: optionData.id,
+                                name: optionData.id,
+                            },
                             error: optionData.type?.disabled.reason
                         })
                         continue
@@ -84,8 +90,14 @@ export const router: (props: any)=>void = (props: { requiredPermissions: [string
                         const permissionsValidate = await optionData.permissionsValidate({  })
                         if(permissionsValidate) {
                             errored_messages.push({
-                                category: categoryData.id,
-                                option: optionData.id,
+                                category: {
+                                    id: categoryData.id,
+                                    name: categoryData.name,
+                                },
+                                option: {
+                                    id: optionData.id,
+                                    name: optionData.id,
+                                },
                                 error: permissionsValidate
                             })
                             continue
@@ -96,8 +108,14 @@ export const router: (props: any)=>void = (props: { requiredPermissions: [string
                     const validated_error = await optionData.serverSideValidation({newData:option_body.newData})
                     if(validated_error){
                         errored_messages.push({
-                            category: categoryData.id,
-                            option: optionData.id,
+                            category: {
+                                id: categoryData.id,
+                                name: categoryData.name,
+                            },
+                            option: {
+                                id: optionData.id,
+                                name: optionData.id,
+                            },
                             error: validated_error
                         })
                         continue
