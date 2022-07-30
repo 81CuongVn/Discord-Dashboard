@@ -10,12 +10,12 @@
     "discord.js": "13",
     "discord.js-docgen": "github:discordjs/docgen#ts-patch",
     "dotenv": "^16.0.1",
+    "ejs": "^3.1.8",
     "eslint": "^7.32.0",
     "jsdoc": "^3.6.11",
     "jsdoc-babel": "^0.5.0",
-    "session-file-store": "^1.5.0",
-    "ejs": "^3.1.8",
-    "point-of-view": "5"
+    "point-of-view": "5",
+    "session-file-store": "^1.5.0"
   },
   "name": "discord-dashboard",
   "version": "beta-3.0.0",
@@ -30,6 +30,7 @@
     "@fastify/oauth2": "5.*",
     "@fastify/session": "8.*",
     "@fastify/static": "5.*",
+    "axios": "^0.27.2",
     "colors": "^1.4.0",
     "discord-oauth2": "^2.10.0",
     "fastify": "3.*"
