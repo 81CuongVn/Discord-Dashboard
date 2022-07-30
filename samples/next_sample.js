@@ -22,7 +22,7 @@ const Theme = new DefaultTheme.Provider()
     })
 
 new Dashboard(Engines.NEXT)
-    .setDev(false)
+    .setDev(true)
     .registerProject({
         accountToken: process.env.ASSISTANTS_SERVICES_ACCOUNT_TOKEN,
         projectId: process.env.DISCORD_DASHBOARD_PROJECT_ID

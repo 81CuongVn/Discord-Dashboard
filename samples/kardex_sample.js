@@ -4,8 +4,7 @@ const dotenv = require('dotenv').config({path: path.join(__dirname, './.env')})
 
 const { Client, Intents } = require('discord.js')
 const client = new Client({ intents: [ Intents.FLAGS.GUILDS ] })
-
-const helmet = require('@fastify/helmet')
+/*const helmet = require('@fastify/helmet')*/
 
 client.login(process.env.BOT_TOKEN)
 
@@ -51,7 +50,7 @@ new Dashboard(Engines.NEXT)
     })
     .setAdministrators(['778685361014046780'])
     .setFastifyUtilities([
-        [helmet, { contentSecurityPolicy: false, global: true }],
+        /*[helmet, { contentSecurityPolicy: false, global: true }],*/
     ])
     .start()
     .then((instance) => {
