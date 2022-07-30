@@ -19,8 +19,6 @@ import * as ApiRouter from './api/router'
 import path from 'path'
 import fs from 'fs'
 
-import axios from 'axios'
-
 import {ErrorThrower} from "./utils/ErrorThrower"
 
 /**
@@ -81,8 +79,6 @@ export class Dashboard {
     public userStatic: UserStatic | undefined
 
     private SSL: SSLOptions | undefined
-
-    public version: string = require('../package.json').version
 
     /**
      * @methodOf Dashboard
@@ -251,15 +247,6 @@ export class Dashboard {
      * @returns {Promise<Dashboard>} - The Dashboard instance.
      */
     public start = async () => {
-        const res = await axios.get('https://registry.npmjs.org/discord-dashboard/latest')
-        if(res.data?.version > this.version){
-            console.log(`[Discord Dashboard v${this.version}] There is a new version of Discord Dashboard available. Please update.`)
-            const this_version = await axios.get(`https://registry.npmjs.org/discord-dashboard/${this.version}`)
-            if(this_version?.data?.deprecated){
-                ErrorThrower(`This version is deprecated. Please update the module.`)
-            }
-        }
-
         if(this.engine == 'next') {
             if (this.dev) {
                 console.log('Dashboard is in development mode. Please note that the dashboard will not send statistics to Assistants Services.')

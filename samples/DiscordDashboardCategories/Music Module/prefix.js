@@ -1,5 +1,5 @@
 const {TextInput} = require('../../../dist/index').FormTypes
-const {TextInputManager, TextInputObjects} = require('../../../Themes/KardexTheme').ThemeOptions
+const {TextInputManager, TextInputObjects} = require('../../../Themes/NextSample').ThemeOptions
 
 let temp = null
 
@@ -12,16 +12,12 @@ module.exports = {
         .setGlobalDisabled(false, '')
         .setClientSideValidation((value)=>{
             if(value == 'x')return "Value cannot be 'x'"
-        })
-        .setMinLength(1)
-        .setMaxLength(10),
+        }),
     themeOptions: new TextInputManager()
         .useEmojiPicker(true)
         .useCustomStyle(TextInputObjects.optionContainer, {
             /*backgroundColor: '#ff0000',*/
-        })
-        .useIconLeft('bi bi-person')
-        .useColMd(12),
+        }),
     // dont display at all
     shouldBeDisplayed: async ({member, guild}) => {
         return true
